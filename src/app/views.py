@@ -6,7 +6,3 @@ async def handle(request):
     text = "Hello, " + name
     print('received request, replying with "{}".'.format(text))
     return web.Response(text=text)
-
-app = web.Application()
-app.router.add_get('/', handle)
-app.router.add_get('/{name}', handle)
