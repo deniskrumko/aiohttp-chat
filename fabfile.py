@@ -4,7 +4,13 @@ from fabric.api import local, task
 @task
 def run():
     """Run local server."""
-    return local('python -u src/server.py')
+    return local('python -m src')
+
+
+@task
+def dev():
+    """Run local server."""
+    return local('adev runserver src')
 
 
 @task
