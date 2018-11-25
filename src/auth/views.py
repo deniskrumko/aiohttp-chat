@@ -18,7 +18,14 @@ class LoginView(web.View):
 
     @validate(**login_schema)
     async def post(data, request):
-        """Generate token by provided credentials."""
+        """Generate token by provided credentials.
+
+        Request parameters:
+
+            * username (str) - user's name
+            * password (str) - user's password
+
+        """
         errors = []
         user_id = await get_user_id(username=data['username'])
 
@@ -44,7 +51,13 @@ class LogoutView(TokenRequiredMixin, web.View):
     """User logout view."""
 
     async def post(self):
-        """Delete user's token."""
+        """Delete user's token.
+
+        Request parameters:
+
+            * token (str) - API token
+
+        """
         data = await self.request.json()
 
         async with self.request.app['pool'].acquire() as connection:
@@ -60,7 +73,16 @@ class SignUpView(web.View):
 
     @validate(**signup_schema)
     async def post(data, request):
-        """Create new user by provided data."""
+        """Create new user by provided data.
+
+        Request parameters:
+
+            * username (str) - new user's name
+            * password_1 (str) - new user's password
+            * password_2 (str) - password confirmation
+            * email (str) - new user's email
+
+        """
         errors = []
 
         if not await is_unique_username(username=data['username']):

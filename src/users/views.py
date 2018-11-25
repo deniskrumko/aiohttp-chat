@@ -48,8 +48,10 @@ class UsersView(TokenRequiredMixin, web.View):
 
 
 class CurrentUserView(TokenRequiredMixin, web.View):
+    """View to get info about current user."""
 
     async def get(self):
+        """Get user's id, name and email."""
         async with self.request.app['pool'].acquire() as connection:
             entry = await connection.fetchrow('''
                 SELECT * FROM users WHERE id = $1

@@ -11,7 +11,15 @@ class SendMessageView(TokenRequiredMixin, web.View):
 
     @validate(**schemas.send_message_schema)
     async def post(data, request):
-        """Create `message` entry."""
+        """Create `message` entry.
+
+        Request parameters:
+
+            * user_id (int) - ID of recipient user
+            * message (str) - message
+            * token (str) - API token
+
+        """
         errors = []
 
         if not await user_exists(user_id=data['user_id']):
@@ -37,7 +45,14 @@ class SendMessageToAllView(TokenRequiredMixin, web.View):
 
     @validate(**schemas.send_message_to_all_schema)
     async def post(data, request):
-        """Create multiple `message` entries."""
+        """Create multiple `message` entries.
+
+        Request parameters:
+
+            * message (str) - message
+            * token (str) - API token
+
+        """
         await utils.send_message_to_all_users(
             sender_id=request.user_id,
             message=data['message']
