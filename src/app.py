@@ -1,13 +1,11 @@
 import asyncio
-import os
 
 import asyncpg
 import uvloop
 from aiohttp import web
 
+from . import config, routes
 from .auth.middleware import auth_token_middleware
-from .config import DB_DSN
-from .routes import setup_routes
 
 # Set uvloop as default loop
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
@@ -18,8 +16,8 @@ async def setup_app():
     app = web.Application(
         middlewares=(auth_token_middleware,)
     )
-    app['pool'] = await asyncpg.create_pool(dsn=DB_DSN)
-    setup_routes(app)
+    app['pool'] = await asyncpg.create_pool(dsn=config.DB_DSN)
+    routes.setup_routes(app)
     return app
 
 
@@ -27,6 +25,6 @@ loop = asyncio.get_event_loop()
 app = loop.run_until_complete(setup_app())
 web.run_app(
     app,
-    host=os.getenv('WEB_HOST', '0.0.0.0'),
-    port=os.getenv('WEB_PORT', '8000'),
+    host=config.WEB_HOST,
+    port=config.WEB_PORT,
 )
