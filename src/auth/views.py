@@ -39,12 +39,15 @@ class LoginView(web.View):
         ):
             errors.append({'password': 'Invalid password'})
 
+        new_token = await generate_token(user_id=user_id)
+
+        if not new_token:
+            errors.append('Cannot generate new token, sorry...')
+
         if errors:
             return web.json_response({'errors': errors}, status=400)
 
-        return web.json_response({
-            'token': await generate_token(user_id=user_id)
-        })
+        return web.json_response({'token': new_token})
 
 
 class LogoutView(TokenRequiredMixin, web.View):
@@ -113,6 +116,11 @@ class SignUpView(web.View):
                 'errors': 'Cannot create new user'
             }, status=400)
 
-        return web.json_response({
-            'token': await generate_token(user_id=new_user_id)
-        })
+        new_token = await generate_token(user_id=new_user_id)
+
+        if not new_token:
+            return web.json_response({
+                'errors': 'Cannot generate new token, sorry...'
+            }, status=400)
+
+        return web.json_response({'token': new_token})
