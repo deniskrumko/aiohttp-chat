@@ -2,22 +2,29 @@ version: '3'
 
 services:
   db:
-    image: postgres:latest
-    container_name: aiochat_db
+    image: aiochatdb:latest
+    container_name: aiochatdb
     expose:
       - "5432"
   web:
-    build: .
-    container_name: aiochat_web
+    image: aiochatweb:latest
+    container_name: aiochatweb
     environment:
       WEB_HOST: "0.0.0.0"
       WEB_PORT: "8000"
+      DB_NAME: "aiochat"
+      DB_USER: "aiochat"
+      DB_PASS: "password"
+      DB_HOST: "db.aiochat.com"
+      DB_PORT: "5432"
     volumes:
       - /src
     expose:
       - "8000"
     ports:
       - "8000:8000"
+    links:
+      - db:db.aiochat.com
     depends_on:
       - db
-    command: python -u server.py
+    command: python -m application

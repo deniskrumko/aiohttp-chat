@@ -3,7 +3,7 @@ __all__ = ('get_app', 'get_pool')
 
 def get_app():
     """Get current app."""
-    from src.app import app
+    from .app import app
     return app
 
 

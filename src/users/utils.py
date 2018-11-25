@@ -50,7 +50,8 @@ async def is_valid_password(user_id, password):
     """Check if password is correct for provided user_id."""
     async with get_pool().acquire() as connection:
         value = await connection.fetchrow('''
-            SELECT * FROM users WHERE id = $1 AND password = $2
+            SELECT * FROM users WHERE id = $1
+            AND password = crypt($2, password)
         ''', user_id, password)
         return bool(value)
 
@@ -64,7 +65,7 @@ async def create_user(**kwargs):
     async with get_pool().acquire() as connection:
         results = await connection.fetchrow('''
             INSERT INTO users (username, password, email)
-            VALUES ($1, $2, $3)
+            VALUES ($1, crypt($2, gen_salt('bf', 8)), $3)
             RETURNING id
         ''', username, password, email)
         return results.get('id') if results else None
