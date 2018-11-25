@@ -6,6 +6,7 @@ def setup_routes(app):
     app.router.add_post('/login', auth_views.login)
     app.router.add_post('/logout', auth_views.logout)
     app.router.add_post('/signup', auth_views.signup)
+    app.router.add_get('/users/active', auth_views.get_active_users)
 
     app.router.add_post('/send', chat_views.send_message)
     app.router.add_post('/send_to_all', chat_views.send_message_to_all)

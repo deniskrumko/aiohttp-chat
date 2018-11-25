@@ -11,22 +11,22 @@ async def generate_token(user_id):
     new_token = token_hex(nbytes=32)  # token length is 64 char
 
     async with get_pool().acquire() as connection:
-        await connection.execute("""
+        await connection.execute('''
             INSERT INTO tokens VALUES ($1, $2)
-        """, new_token, user_id)
+        ''', new_token, user_id)
 
     return new_token
 
 
 async def find_token(token):
     async with get_pool().acquire() as connection:
-        return await connection.fetchrow("""
+        return await connection.fetchrow('''
             SELECT * FROM tokens WHERE token = $1
-        """, token)
+        ''', token)
 
 
 async def remove_token(token):
     async with get_pool().acquire() as connection:
-        await connection.execute("""
+        await connection.execute('''
             DELETE FROM tokens WHERE token = $1
-        """, token)
+        ''', token)

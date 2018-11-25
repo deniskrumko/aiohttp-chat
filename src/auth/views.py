@@ -72,3 +72,34 @@ async def signup(data, request):
     return web.json_response({
         'token': await utils.generate_token(user_id=new_user_id)
     })
+
+
+async def get_active_users(request):
+    sql_requests = {
+        'all': 'SELECT id, username FROM users WHERE id != $1',
+        'active': '''
+            SELECT id, username FROM users
+            WHERE id IN (SELECT DISTINCT user_id FROM tokens)
+            AND id != $1
+        ''',
+        'inactive': '''
+            SELECT id, username FROM users
+            WHERE id NOT IN (SELECT DISTINCT user_id FROM tokens)
+            AND id != $1
+        ''',
+    }
+    users_type = request.query.get('type')
+    sql = sql_requests.get(users_type) or sql_requests['all']
+
+    async with request.app['pool'].acquire() as connection:
+        users = await connection.fetch(sql, request.user_id)
+
+    return web.json_response({
+        'users': [
+            {
+                'id': obj.get('id'),
+                'username': obj.get('username')
+            }
+            for obj in users
+        ]
+    })
