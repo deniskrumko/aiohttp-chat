@@ -58,9 +58,16 @@ async def get_chats_for_user(user_id):
     """
     async with get_pool().acquire() as connection:
         users = await connection.fetch('''
-            SELECT DISTINCT sender_id AS id
-            FROM messages
-            WHERE sender_id = $1 OR recipient_id = $1
+            SELECT * FROM users WHERE id != $1 AND (
+              id IN (
+                SELECT DISTINCT recipient_id
+                FROM messages WHERE sender_id = $1
+              )
+              OR id IN (
+                SELECT DISTINCT sender_id
+                FROM messages WHERE recipient_id = $1
+              )
+            );
         ''', user_id)
 
     results = []
