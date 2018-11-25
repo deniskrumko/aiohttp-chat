@@ -1,11 +1,12 @@
 from secrets import token_hex
 
-from ...utils import get_pool
+from ..utils import get_pool
 
 __all__ = ('generate_token', 'find_token', 'remove_token')
 
 
 async def generate_token(user_id):
+    """Generate new token entry."""
 
     # TODO: Add "while True" cycle to check that token is unique
     new_token = token_hex(nbytes=32)  # token length is 64 char
@@ -19,6 +20,7 @@ async def generate_token(user_id):
 
 
 async def find_token(token):
+    """Find token in database."""
     async with get_pool().acquire() as connection:
         return await connection.fetchrow('''
             SELECT * FROM tokens WHERE token = $1
@@ -26,6 +28,7 @@ async def find_token(token):
 
 
 async def remove_token(token):
+    """Remove token from database."""
     async with get_pool().acquire() as connection:
         await connection.execute('''
             DELETE FROM tokens WHERE token = $1

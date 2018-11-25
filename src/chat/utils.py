@@ -8,6 +8,7 @@ __all__ = (
 
 
 async def send_message_to_user(sender_id, recipient_id, message):
+    """Send message to specific user."""
     async with get_pool().acquire() as connection:
         await connection.execute('''
             INSERT INTO messages (sender_id, recipient_id, message)
@@ -16,6 +17,7 @@ async def send_message_to_user(sender_id, recipient_id, message):
 
 
 async def send_message_to_all_users(sender_id, message):
+    """Send message to all users."""
     async with get_pool().acquire() as connection:
         await connection.execute('''
             INSERT INTO messages (recipient_id, sender_id, message)
@@ -26,6 +28,11 @@ async def send_message_to_all_users(sender_id, message):
 
 
 async def get_chat_info(current_user_id, user_id):
+    """Get information about chat with one user.
+
+    Method returns `unread_count` and `last_message`.
+
+    """
     async with get_pool().acquire() as connection:
         return await connection.fetchrow('''
             SELECT COUNT(*) as unread_count,
@@ -42,6 +49,13 @@ async def get_chat_info(current_user_id, user_id):
 
 
 async def get_chats_for_user(user_id):
+    """Get list of chats for current user.
+
+    Method find all chats for current user (if at least one message between
+    two users exist) and then for each chat it finds amount of unread messages
+    and last available message.
+
+    """
     async with get_pool().acquire() as connection:
         users = await connection.fetch('''
             SELECT DISTINCT sender_id AS id
@@ -67,6 +81,12 @@ async def get_chats_for_user(user_id):
 
 
 async def get_messages(current_user_id, user_id):
+    """Get list of messages in chat.
+
+    Method finds all messages between two users and sort them by `created`
+    field.
+
+    """
     async with get_pool().acquire() as connection:
         results = await connection.fetch('''
             SELECT * FROM messages
