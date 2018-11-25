@@ -9,6 +9,12 @@ def run():
     """Run local server."""
     return local('python -m src')
 
+
+@task
+def requirements():
+    """Install requirements."""
+    local('pip install -r requirements.txt')
+
 # Docker
 # ========================================================================
 
@@ -21,15 +27,15 @@ def build():
 
 
 @task
-def db():
+def db(daemon=False):
     """Run db container."""
-    local('docker-compose up db')
+    local(f'docker-compose up {"-d" if daemon else ""} db')
 
 
 @task
-def web():
+def web(daemon=False):
     """Run web container."""
-    local('docker-compose up web')
+    local(f'docker-compose up {"-d" if daemon else ""} web')
 
 
 @task
