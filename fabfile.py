@@ -5,7 +5,7 @@ from fabric.api import local, task
 
 
 @task
-def run_local():
+def run():
     """Run local server."""
     return local('python -m src')
 
@@ -21,26 +21,19 @@ def build():
 
 
 @task
-def run_db():
+def db():
     """Run db container."""
     local('docker-compose up db')
 
 
 @task
-def run_web():
+def web():
     """Run web container."""
     local('docker-compose up web')
 
 
 @task
-def daemon_start():
-    """Run all containers as daemons."""
-    local('docker-compose up -d db')
-    local('docker-compose up -d web')
-
-
-@task
-def daemon_stop():
+def stop():
     """Stop all containers."""
     local('docker-compose stop')
 
