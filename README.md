@@ -2,11 +2,20 @@
 
 Simple chat backend.
 
+**☠️ THIS PROJECT IS NO LONGER SUPPORTED ☠️**
+
 ## Requirements
 
   * python >= 3.6
   * postgres >= 11.1
   * aiohttp >= 3.4.4
+
+## About
+
+This is a test project from one of my interviews:
+* Code quality is not garanteed
+* No tests at all
+* I don't remember how it properly works
 
 ---
 
